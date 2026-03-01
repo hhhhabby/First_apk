@@ -26,10 +26,11 @@ jobs:
           cache: gradle
 
       - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@v4
         with:
-          flutter-version: '3.6.1'
-          channel: 'stable'
+          channel: stable
+          # flutter-version: 3.27.3  # 注释掉版本号让action自动选择最新稳定版
+
 
       - name: Get Flutter dependencies
         run: |
