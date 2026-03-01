@@ -33,8 +33,6 @@ jobs:
 
       - name: Get Flutter dependencies
         run: |
-          cd android
-          chmod +x gradlew
           flutter pub get
 
       - name: Build release APK
