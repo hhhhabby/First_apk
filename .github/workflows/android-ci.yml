@@ -31,7 +31,7 @@ jobs:
           channel: stable
           # flutter-version: 3.27.3  # 注释掉版本号让action自动选择最新稳定版
 
-
+#11
       - name: Get Flutter dependencies
         run: |
           cd android
