@@ -15,7 +15,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:moviedex/api/contentproviders/anime_providers/gogo.dart';
-import 'package:moviedex/api/contentproviders/movie-tv_providers/Autoembed.dart';
+import 'package:moviedex/api/contentproviders/movie-tv_providers/autoembed.dart';
 import 'package:moviedex/api/contentproviders/movie-tv_providers/embed.dart';
 import 'package:moviedex/api/contentproviders/movie-tv_providers/vidsrc.dart';
 import 'package:moviedex/api/contentproviders/movie-tv_providers/vidsrcsu.dart';

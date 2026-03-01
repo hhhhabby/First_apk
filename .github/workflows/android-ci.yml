@@ -3,11 +3,17 @@ name: Build and Release APK
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: # 允许手动触发
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,31 +25,56 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Set up Flutter
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
+          flutter-version: '3.6.1'
           channel: 'stable'
-          cache: true
-#//
-      - name: Install dependencies
-        run: flutter pub get
 
-      - name: Build debug APK
-        run: flutter build apk --debug
+      - name: Get Flutter dependencies
+        run: |
+          cd android
+          chmod +x gradlew
+          flutter pub get
 
-      - name: Upload APK to Artifact
+      - name: Build release APK
+        run: |
+          flutter build apk --release
+          echo "APK built successfully"
+
+      - name: Find APK file
+        id: find_apk
+        run: |
+          APK_PATH=$(find build/app/outputs/flutter-apk -name "*.apk" | head -n 1)
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
+          echo "Found APK at: $APK_PATH"
+
+      - name: Upload APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: movie-dex-release
+          path: ${{ steps.find_apk.outputs.APK_PATH }}
 
-      - name: Create Release and Upload APK
+      - name: Create Release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/heads/main')
         with:
-          files: build/app/outputs/flutter-apk/app-debug.apk
-          tag_name: auto-build-${{ github.sha }}
-          name: Auto Build ${{ github.sha }}
-          body: Automatic build from main branch
+          files: ${{ steps.find_apk.outputs.APK_PATH }}
+          tag_name: v${{ github.run_number }}.${{ github.run_attempt }}
+          name: MovieDex Release v${{ github.run_number }}.${{ github.run_attempt }}
+          body: |
+            ## 🎬 MovieDex 自动构建版本
+            
+            构建时间: $(date '+%Y-%m-%d %H:%M:%S')
+            提交哈希: ${{ github.sha }}
+            
+            ### 更新内容
+            - 自动构建版本
+            - 包含最新功能和修复
+            
+            ### 下载说明
+            点击下方的 APK 文件下载最新版本。
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

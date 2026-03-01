@@ -2,7 +2,8 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"    
+    // 注释Google服务插件，解决google-services.json缺失报错
+    // id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
@@ -30,7 +31,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.kodify.moviedex"
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -49,14 +50,14 @@ android {
     defaultConfig {
         applicationId "com.kodify.moviedex"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
-        
+
         // Optimize for faster startup
         resConfigs "en", "xxhdpi"
-    } 
+    }
 
     buildTypes {
         debug {
@@ -72,7 +73,7 @@ android {
             multiDexEnabled true
         }
     }
-    
+
     // Optimize build performance
     packagingOptions {
         pickFirst '**/libc++_shared.so'
@@ -87,7 +88,8 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.firebase:firebase-analytics:21.5.0'
+    // 注释Firebase依赖，避免依赖Google服务
+    // implementation 'com.google.firebase:firebase-analytics:21.5.0'
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.startup:startup-runtime:1.1.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
